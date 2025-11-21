@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://csm83dw0j73dr"]
+
+[node name="PlayerTank" type="VehicleBody3D"]
+
+[node name="NewBoxMesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(6.760949, 0, 0, 0, 1, 0, 0, 0, 7.0399375, -0.3044474, 0, -0.5187712)
