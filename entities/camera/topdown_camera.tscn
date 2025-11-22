@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://civv5axwjpdef"]
+
+[ext_resource type="Script" uid="uid://bx6n2aw6teidr" path="res://entities/camera/topdown_camera.gd" id="1_j3d35"]
+
+[node name="TopdownCamera" type="Marker3D"]
+transform = Transform3D(1, -8.940697e-08, 8.940697e-08, 0, 0.70710677, 0.7071067, -8.940697e-08, -0.7071067, 0.70710677, 0, 0, 0)
+script = ExtResource("1_j3d35")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 2.6186719e-08, -2.6186704e-08, -2.1316282e-14, 1, 0, 0, 0, 0.99999994, -6.519258e-07, 4.4100437, 12.895326)

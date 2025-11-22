@@ -1,0 +1,121 @@
+class_name BotPlayer
+extends Player
+
+@onready var bullet_scene: PackedScene = preload("res://entities/projectiles/bullet.tscn")
+@onready var collision = $CollisionShape3D
+
+var target: Player
+
+var can_fire = true
+## X rotation factor
+var mouse_sensitivity: float = 0.002
+
+var speed: float = 5.0
+var rotation_speed: float = 5.0
+var target_velocity = Vector3.ZERO
+var target_angle: float = 0
+
+func _ready():
+	Input.mouse_mode = (Input.MOUSE_MODE_CAPTURED)
+	
+	
+	# 1. Get the nodes
+	var base = $AssaultTank/Model/base
+	var left_wheel = $AssaultTank/Model/left
+	var right_wheel = $AssaultTank/Model/right
+	var pipe_cup = $AssaultTank/Model/pipe_cup
+	
+	# 2. Move the wheels inside the base
+	# The 'true' argument keeps them in their current physical position
+	left_wheel.reparent(base, true)
+	right_wheel.reparent(base, true)
+
+		
+func _physics_process(delta: float) -> void:
+	# Shooting
+	if can_fire and Input.is_action_pressed("primary_shoot"):
+		can_fire = false
+		$AssaultTank.fire_bullet()
+	
+	var input_dir = Vector3.ZERO
+	
+	if Input.is_action_pressed("move_right"):
+		input_dir.x += 1
+	if Input.is_action_pressed("move_left"):
+		input_dir.x -= 1
+	if Input.is_action_pressed("move_up"):
+		input_dir.z -= 1
+	if Input.is_action_pressed("move_down"):
+		input_dir.z += 1
+	
+	if input_dir != Vector3.ZERO:
+		input_dir = input_dir.normalized()
+		
+		# 2. Apply that rotation to your input direction
+		var direction = (input_dir)
+		
+		# 3. Flatten the Y axis so looking up/down doesn't slow you down or make you fly
+		direction.y = 0
+		direction = direction.normalized()
+		
+		# Apply velocity
+		target_velocity = direction * speed
+		
+		# Smoothly rotate the base
+		var look_direction = Vector3(direction.x, 0, direction.z)
+		if look_direction != Vector3.ZERO:
+			# Calculate the angle we want to face (in radians)
+			# atan2(x, z) gives us the angle from the vector
+			target_angle = atan2(look_direction.x, look_direction.z)
+			
+			# Look away from camera
+			target_angle += PI 
+
+			# Smoothly rotate ONLY the Y axis
+			$AssaultTank/Model/base.rotation.y = lerp_angle($AssaultTank/Model/base.rotation.y, target_angle, rotation_speed * delta)
+			collision.rotation.y = $AssaultTank/Model/base.rotation.y 
+	else:
+		target_velocity = Vector3.ZERO
+	
+		
+	# Calculate how far off we are (0.0 is perfect, 1.0 is facing opposite)
+	var angle_diff = abs(angle_difference($AssaultTank/Model/base.rotation.y, target_angle))
+	
+	# Create a multiplier: 
+	# If angle is 0 (facing forward), multiplier is 1.0 (Full Speed).
+	# If angle is 90 degrees (1.57 rad), multiplier is approx 0.0 (Stop and rotate then start moving).
+	var turn_penalty = clamp(1.0 - (angle_diff / 2.0), 0.0, 1.0)
+	
+	# Apply velocity with the penalty
+	velocity = target_velocity * turn_penalty
+	
+	if not is_on_floor():
+		velocity.y -= 100 * 9.8 * delta
+		
+	move_and_slide()
+func _unhandled_input(event):
+	# 1. Handle the Escape Key
+	# We check 'is_echo()' to ensure holding the button doesn't rapid-fire toggle it
+	if event.is_action_pressed("ui_cancel") and not event.is_echo():
+		print("Escape")
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			print("SHOWN")
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			print("HIDDEN")
+		
+		# IMPORTANT: Tell Godot "I handled this, don't let anyone else use it"
+		get_viewport().set_input_as_handled()
+
+	# 2. Handle Mouse Rotation
+	# Only rotate if the mouse is actually captured (so you don't rotate while in menus)
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		var mouse_delta_x = event.relative.x * mouse_sensitivity
+
+		$AssaultTank/Model/pipe.rotate_y(-mouse_delta_x)
+		$AssaultTank/Model/pipe_cup.rotate_y(-mouse_delta_x)
+		$AssaultTank/Model/turret_mount.rotate_y(-mouse_delta_x)
+
+func _on_firerate_timer_timeout() -> void:
+	can_fire = true

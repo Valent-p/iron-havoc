@@ -1,10 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://badg2xqjcwmxm"]
+[gd_scene load_steps=11 format=3 uid="uid://badg2xqjcwmxm"]
 
-[ext_resource type="PackedScene" uid="uid://cu5cp3afg45js" path="res://entities/players/user/user_player.tscn" id="1_46lwt"]
+[ext_resource type="PackedScene" uid="uid://cu5cp3afg45js" path="res://entities/player/player.tscn" id="1_46lwt"]
 [ext_resource type="Texture2D" uid="uid://b3a4b0sxfbxxw" path="res://icon.svg" id="1_x25rp"]
 [ext_resource type="PackedScene" uid="uid://oqjfqsui4xs5" path="res://levels/wall.tscn" id="3_gmgay"]
-[ext_resource type="PackedScene" uid="uid://45nrlva4s2re" path="res://entities/players/bot/bot_player.tscn" id="4_w7r7j"]
-[ext_resource type="Script" uid="uid://22pib0i53s3k" path="res://levels/character_body_3d.gd" id="5_o6mel"]
+[ext_resource type="PackedScene" uid="uid://45nrlva4s2re" path="res://entities/player/bot_player.tscn" id="4_w7r7j"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_x25rp"]
 
@@ -22,16 +21,6 @@ albedo_color = Color(0.19076231, 0.19076234, 0.19076231, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_ur00s"]
 material = SubResource("StandardMaterial3D_e7anx")
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_ur00s"]
-
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_wndkh"]
-
-[sub_resource type="NavigationMesh" id="NavigationMesh_w7r7j"]
-vertices = PackedVector3Array(-13.3786955, -0.011190891, -8.876082, -13.3786955, -0.011190891, 8.873918, 13.3713045, -0.011190891, 8.873918, 13.3713045, -0.011190891, -8.876082)
-polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_o6mel"]
 
 [node name="TestLevel" type="Node3D"]
 
@@ -92,10 +81,10 @@ transform = Transform3D(1, 0, 0, 0, 4, 0, 0, 0, 32, 0.48306847, 1.7500124, 0)
 mesh = SubResource("BoxMesh_ur00s")
 
 [node name="Player" parent="." instance=ExtResource("1_46lwt")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 4.3295546, 0.6523547, 0)
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.56829655, -0.05488737, 0.82099116, -0.7333242, 0.41875863, 0.5356089, -0.37319523, -0.90643734, 0.1977288, 0, 30.466705, 49.043358)
+transform = Transform3D(1, 0, 0, 0, 0.9359059, 0.35225, 0, -0.35225, 0.9359059, 0, 30.466705, 49.043358)
 shadow_enabled = true
 
 [node name="Wall" parent="." instance=ExtResource("3_gmgay")]
@@ -103,25 +92,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 0)
 
 [node name="Bot" parent="." instance=ExtResource("4_w7r7j")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -9.076202, 1.9785514, -1.494564)
-
-[node name="CharacterBody3D" type="CharacterBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5929282, 0)
-script = ExtResource("5_o6mel")
-
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="CharacterBody3D"]
-debug_enabled = true
-debug_path_custom_color = Color(0.59363925, 0.00025749952, 0.5936351, 1)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="CharacterBody3D"]
-mesh = SubResource("CapsuleMesh_ur00s")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="CharacterBody3D"]
-shape = SubResource("CapsuleShape3D_wndkh")
-
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.070293, 0)
-navigation_mesh = SubResource("NavigationMesh_w7r7j")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D"]
-transform = Transform3D(13.8786955, 0, 0, 0, 1, 0, 0, 0, 9.376082, 0, -0.5111909, 0)
-mesh = SubResource("PlaneMesh_o6mel")

@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://dv6q6bqa7kr4"]
+
+[ext_resource type="Material" uid="uid://c4jelm6bdilic" path="res://entities/particles/bullet_hit_particles.tres" id="1_f5swa"]
+[ext_resource type="Material" uid="uid://t0ai24tv5cpe" path="res://entities/projectiles/bullet_material.tres" id="2_ruyck"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ruyck"]
+material = ExtResource("2_ruyck")
+
+[node name="BulletHitParticles" type="GPUParticles3D"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+amount = 20
+lifetime = 0.6
+explosiveness = 1.0
+collision_base_size = 0.2
+process_material = ExtResource("1_f5swa")
+draw_pass_1 = SubResource("BoxMesh_ruyck")

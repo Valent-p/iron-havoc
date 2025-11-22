@@ -1,0 +1,22 @@
+[gd_resource type="ParticleProcessMaterial" load_steps=2 format=3 uid="uid://c4jelm6bdilic"]
+
+[ext_resource type="Texture2D" uid="uid://bx7gyft3n212j" path="res://entities/particles/bullet_hit_particles_curve.tres" id="1_yecd1"]
+
+[resource]
+spread = 180.0
+radial_velocity_min = -2.2351742e-05
+radial_velocity_max = 4.9999776
+radial_velocity_curve = ExtResource("1_yecd1")
+gravity = Vector3(0, 0, 0)
+attractor_interaction_enabled = false
+scale_min = 0.099999994
+scale_max = 0.19999999
+scale_curve = ExtResource("1_yecd1")
+turbulence_noise_strength = 14.65
+turbulence_noise_scale = 8.415
+turbulence_noise_speed = Vector3(500, 0, 0)
+turbulence_noise_speed_random = 4.0
+turbulence_influence_min = 0.026
+turbulence_influence_max = 0.99600005
+turbulence_initial_displacement_min = -100.0
+turbulence_initial_displacement_max = 100.0

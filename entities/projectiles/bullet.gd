@@ -1,5 +1,7 @@
 extends Area3D
 
+@onready var particles_scn = preload("res://entities/particles/bullet_hit_particles.tscn")
+
 var speed: float = 200.0
 var damage: int = 25
 
@@ -24,6 +26,12 @@ func _on_body_entered(body: Node3D):
 		body.take_damage(damage)
 	
 	# Create an explosion effect here if you have one
+	var particles: GPUParticles3D = particles_scn.instantiate()
+	get_parent().add_child(particles)
+	particles.global_position = global_position
+	particles.one_shot = true
+	#particles.process_material.scale_max = 0.1
+	
 	
 	# Destroy the bullet
 	queue_free()
