@@ -1,4 +1,4 @@
-extends Node3D
+extends Tank
 
 @onready var bullet_scene: PackedScene = preload("res://entities/projectiles/bullet.tscn")
 

@@ -8,8 +8,8 @@ var can_fire = true
 ## X rotation factor
 var mouse_sensitivity: float = 0.002
 
-var speed: float = 5.0
-var rotation_speed: float = 5.0
+var speed: float = 200.0
+var rotation_speed: float = deg_to_rad(180)
 var target_velocity = Vector3.ZERO
 var target_angle: float = 0
 
@@ -20,7 +20,6 @@ func _ready():
 	var base = $AssaultTank/Model/base
 	var left_wheel = $AssaultTank/Model/left
 	var right_wheel = $AssaultTank/Model/right
-	var pipe_cup = $AssaultTank/Model/pipe_cup
 	
 	# 2. Move the wheels inside the base
 	# The 'true' argument keeps them in their current physical position
@@ -28,10 +27,7 @@ func _ready():
 	right_wheel.reparent(base, true)
 
 func _physics_process(delta: float) -> void:
-	# Shooting
-	if can_fire and Input.is_action_pressed("primary_shoot"):
-		can_fire = false
-		$AssaultTank.fire_bullet()
+	action_shoot()
 	
 	var input_dir = Vector3.ZERO
 	
@@ -44,6 +40,14 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("move_down"):
 		input_dir.z += 1
 	
+	action_move(delta, input_dir)
+
+func action_shoot():
+	if can_fire and Input.is_action_pressed("primary_shoot"):
+		can_fire = false
+		$AssaultTank.fire_bullet()
+
+func action_move(delta:float, input_dir: Vector3) -> bool:
 	if input_dir != Vector3.ZERO:
 		input_dir = input_dir.normalized()
 		
@@ -58,7 +62,7 @@ func _physics_process(delta: float) -> void:
 		direction = direction.normalized()
 		
 		# Apply velocity
-		target_velocity = direction * speed
+		target_velocity = direction * speed * delta
 		
 		# Smoothly rotate the base
 		var look_direction = Vector3(direction.x, 0, direction.z)
@@ -90,7 +94,7 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= 100 * 9.8 * delta
 		
-	move_and_slide()
+	return move_and_slide()
 
 func _unhandled_input(event):
 	# 1. Handle the Escape Key
@@ -110,12 +114,14 @@ func _unhandled_input(event):
 	# 2. Handle Mouse Rotation
 	# Only rotate if the mouse is actually captured (so you don't rotate while in menus)
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		var mouse_delta_x = event.relative.x * mouse_sensitivity
+		action_muzzle_rotate(event.relative.x)
 
-		$AssaultTank/Model/pipe.rotate_y(-mouse_delta_x)
-		$AssaultTank/Model/pipe_cup.rotate_y(-mouse_delta_x)
-		$AssaultTank/Model/turret_mount.rotate_y(-mouse_delta_x)
-		camera.rotate_y(-mouse_delta_x)
+func action_muzzle_rotate(relative_x: float):
+	var mouse_delta_x = relative_x * mouse_sensitivity
+	$AssaultTank/Model/pipe.rotate_y(-mouse_delta_x)
+	$AssaultTank/Model/pipe_cup.rotate_y(-mouse_delta_x)
+	$AssaultTank/Model/turret_mount.rotate_y(-mouse_delta_x)
+	camera.rotate_y(-mouse_delta_x)
 
 func _on_firerate_timer_timeout() -> void:
 	can_fire = true

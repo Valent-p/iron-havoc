@@ -104,6 +104,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 0)
 [node name="Bot" parent="." instance=ExtResource("4_w7r7j")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -9.076202, 1.9785514, -1.494564)
 
+[node name="Bot2" parent="." instance=ExtResource("4_w7r7j")]
+transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.478098, 1.9785514, -1.494564)
+
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5929282, 0)
 script = ExtResource("5_o6mel")

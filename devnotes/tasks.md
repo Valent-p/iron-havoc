@@ -1,8 +1,6 @@
 # Iron Havoc Dev Tasks
 
-NOTE: The latest tasks are at top with the highest version code.
-And, the most latest version if has only expectation sub heading, then this commit is of the task below it.
-Before I commit, I write plan for the next edits. Therefore, the top most is what i want to achieve next.
+Things I have to achieve or have achieved.
 
 ## Version 0.0.3
 
@@ -10,6 +8,15 @@ Before I commit, I write plan for the next edits. Therefore, the top most is wha
 
 - Started to implement navigation, so I expect to finish or improve.
 - Adding bot decisions and shooting.
+
+### Completed (22:07 - 23/11/25)
+
+#### Adds bot AI decision system and refactors player logic
+
+Introduces a behavior tree-based AI for bots, enabling movement, aiming, and shooting decisions.
+Refactors player and bot movement, aiming, and shooting into modular actions for easier control and future extensibility.
+Improves tank inheritance and streamlines user and bot player scenes for better maintainability.
+Lays groundwork for scalable AI and user control strategies.
 
 ## Version 0.0.2
 

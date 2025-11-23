@@ -4,118 +4,116 @@ extends Player
 @onready var bullet_scene: PackedScene = preload("res://entities/projectiles/bullet.tscn")
 @onready var collision = $CollisionShape3D
 
-var target: Player
+# Visual Nodes
+@onready var base_mesh = $AssaultTank/Model/base
+# We group the turret parts to rotate them together
+@onready var turret_parts = [
+	$AssaultTank/Model/pipe, 
+	$AssaultTank/Model/pipe_cup, 
+	$AssaultTank/Model/turret_mount
+]
 
+# Stats
+var speed: float = 6.0
+var base_turn_speed: float = deg_to_rad(180) # Radians per second
+var turret_turn_speed: float = 10.0 # Faster than base
+
+# Logic State
+var _move_direction: Vector3 = Vector3.ZERO
+var _aim_position: Vector3 = Vector3.ZERO # The world position we want to shoot
+var _is_aiming: bool = false
 var can_fire = true
-## X rotation factor
-var mouse_sensitivity: float = 0.002
-
-var speed: float = 5.0
-var rotation_speed: float = 5.0
-var target_velocity = Vector3.ZERO
-var target_angle: float = 0
 
 func _ready():
-	Input.mouse_mode = (Input.MOUSE_MODE_CAPTURED)
-	
-	
-	# 1. Get the nodes
-	var base = $AssaultTank/Model/base
+	# Keep your wheel logic
 	var left_wheel = $AssaultTank/Model/left
 	var right_wheel = $AssaultTank/Model/right
-	var pipe_cup = $AssaultTank/Model/pipe_cup
-	
-	# 2. Move the wheels inside the base
-	# The 'true' argument keeps them in their current physical position
-	left_wheel.reparent(base, true)
-	right_wheel.reparent(base, true)
+	left_wheel.reparent(base_mesh, true)
+	right_wheel.reparent(base_mesh, true)
 
-		
 func _physics_process(delta: float) -> void:
-	# Shooting
-	if can_fire and Input.is_action_pressed("primary_shoot"):
+	_handle_movement(delta)
+	_handle_turret_aiming(delta)
+	
+	# Gravity
+	if not is_on_floor():
+		velocity.y -= 20 * 9.8 * delta
+	move_and_slide()
+
+# --- INTERNAL PHYSICS LOGIC ---
+
+func _handle_movement(delta: float):
+	if _move_direction == Vector3.ZERO:
+		# Decelerate
+		velocity.x = move_toward(velocity.x, 0, speed * delta)
+		velocity.z = move_toward(velocity.z, 0, speed * delta)
+		return
+
+	# 1. Rotate Base to face movement direction
+	var target_angle = atan2(_move_direction.x, _move_direction.z)
+	var current_angle = base_mesh.rotation.y
+	
+	# Smooth rotation (LerpAngle handles the 360->0 wrap-around automatically)
+	base_mesh.rotation.y = lerp_angle(current_angle, target_angle, base_turn_speed * delta)
+	collision.rotation.y = base_mesh.rotation.y # Sync collision
+	
+	# 2. Move
+	# Turn penalty: Slow down if we are facing the wrong way
+	var angle_diff = abs(angle_difference(base_mesh.rotation.y, target_angle))
+	var turn_penalty = clamp(1.0 - (angle_diff / 1.5), 0.2, 1.0) # Never stop completely (0.2)
+	
+	var desired_velocity = _move_direction * speed * turn_penalty
+	velocity.x = desired_velocity.x
+	velocity.z = desired_velocity.z
+
+func _handle_turret_aiming(delta: float):
+	if not _is_aiming: return
+	
+	# Calculate target angle from Turret Center to Aim Position
+	var turret_center = $AssaultTank/Model/turret_mount.global_position
+	var dir_to_target = ( _aim_position - turret_center).normalized()
+	
+	# Calculate Yaw (Y-axis rotation)
+	var target_yaw = atan2(dir_to_target.x, dir_to_target.z)
+	
+	# Since your turret parts are likely children of the Tank Base (or Root), 
+	# we need to rotate them. 
+	# WARNING: If they are children of Base, we must account for Base rotation?
+	# Assuming they are children of Root (Player) or independent:
+	
+	# We rotate the first part (mount), and others follow? 
+	# Based on your previous code, you rotated ALL of them. Let's do that.
+	
+	var current_yaw = $AssaultTank/Model/turret_mount.rotation.y
+	var new_yaw = lerp_angle(current_yaw, target_yaw, turret_turn_speed * delta)
+	
+	for part in turret_parts:
+		# If parts are children of 'AssaultTank' (which doesn't rotate), global rotation logic applies directly.
+		# If they are children of 'base', we'd need local rotation. 
+		# Assuming they function like your previous code:
+		part.rotation.y = new_yaw
+
+# --- AI COMMANDS (Call these from Behavior Tree) ---
+
+## AI calls this to move. Input is normalized direction vector.
+func cmd_move(direction: Vector3):
+	_move_direction = direction.normalized()
+	_move_direction.y = 0 # Flatten
+
+## AI calls this to look at a specific point in the world
+func cmd_aim_at(position: Vector3):
+	_aim_position = position
+	_is_aiming = true
+
+## AI calls this to stop aiming
+func cmd_stop_aim():
+	_is_aiming = false
+
+func action_shoot():
+	if can_fire:
 		can_fire = false
 		$AssaultTank.fire_bullet()
-	
-	var input_dir = Vector3.ZERO
-	
-	if Input.is_action_pressed("move_right"):
-		input_dir.x += 1
-	if Input.is_action_pressed("move_left"):
-		input_dir.x -= 1
-	if Input.is_action_pressed("move_up"):
-		input_dir.z -= 1
-	if Input.is_action_pressed("move_down"):
-		input_dir.z += 1
-	
-	if input_dir != Vector3.ZERO:
-		input_dir = input_dir.normalized()
-		
-		# 2. Apply that rotation to your input direction
-		var direction = (input_dir)
-		
-		# 3. Flatten the Y axis so looking up/down doesn't slow you down or make you fly
-		direction.y = 0
-		direction = direction.normalized()
-		
-		# Apply velocity
-		target_velocity = direction * speed
-		
-		# Smoothly rotate the base
-		var look_direction = Vector3(direction.x, 0, direction.z)
-		if look_direction != Vector3.ZERO:
-			# Calculate the angle we want to face (in radians)
-			# atan2(x, z) gives us the angle from the vector
-			target_angle = atan2(look_direction.x, look_direction.z)
-			
-			# Look away from camera
-			target_angle += PI 
-
-			# Smoothly rotate ONLY the Y axis
-			$AssaultTank/Model/base.rotation.y = lerp_angle($AssaultTank/Model/base.rotation.y, target_angle, rotation_speed * delta)
-			collision.rotation.y = $AssaultTank/Model/base.rotation.y 
-	else:
-		target_velocity = Vector3.ZERO
-	
-		
-	# Calculate how far off we are (0.0 is perfect, 1.0 is facing opposite)
-	var angle_diff = abs(angle_difference($AssaultTank/Model/base.rotation.y, target_angle))
-	
-	# Create a multiplier: 
-	# If angle is 0 (facing forward), multiplier is 1.0 (Full Speed).
-	# If angle is 90 degrees (1.57 rad), multiplier is approx 0.0 (Stop and rotate then start moving).
-	var turn_penalty = clamp(1.0 - (angle_diff / 2.0), 0.0, 1.0)
-	
-	# Apply velocity with the penalty
-	velocity = target_velocity * turn_penalty
-	
-	if not is_on_floor():
-		velocity.y -= 100 * 9.8 * delta
-		
-	move_and_slide()
-func _unhandled_input(event):
-	# 1. Handle the Escape Key
-	# We check 'is_echo()' to ensure holding the button doesn't rapid-fire toggle it
-	if event.is_action_pressed("ui_cancel") and not event.is_echo():
-		print("Escape")
-		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-			print("SHOWN")
-		else:
-			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-			print("HIDDEN")
-		
-		# IMPORTANT: Tell Godot "I handled this, don't let anyone else use it"
-		get_viewport().set_input_as_handled()
-
-	# 2. Handle Mouse Rotation
-	# Only rotate if the mouse is actually captured (so you don't rotate while in menus)
-	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		var mouse_delta_x = event.relative.x * mouse_sensitivity
-
-		$AssaultTank/Model/pipe.rotate_y(-mouse_delta_x)
-		$AssaultTank/Model/pipe_cup.rotate_y(-mouse_delta_x)
-		$AssaultTank/Model/turret_mount.rotate_y(-mouse_delta_x)
+		# Add timer reset logic here or in node
 
 func _on_firerate_timer_timeout() -> void:
 	can_fire = true
