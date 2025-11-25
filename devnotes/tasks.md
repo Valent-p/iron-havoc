@@ -2,6 +2,17 @@
 
 Things I have to achieve or have achieved.
 
+## Version 0.0.4
+
+### Expectation (16:58 - 25/11/25)
+
+- Started to implement navigation, so I expect to finish or improve.
+- Adding bot decisions and shooting.
+
+### Completed (16:58 - 25/11/25)
+
+- The bot decisions are now better. Can chase, shoot, strafe or runaway (Tasks).
+
 ## Version 0.0.3
 
 ### Expectation (16:51 - 22/11/25)

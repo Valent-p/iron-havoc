@@ -1,9 +1,10 @@
-[gd_resource type="BehaviorTree" load_steps=21 format=3 uid="uid://cbde2ehtgcqxi"]
+[gd_resource type="BehaviorTree" load_steps=25 format=3 uid="uid://cbde2ehtgcqxi"]
 
 [ext_resource type="Script" uid="uid://3n3bjyugu0bw" path="res://ai/tasks/movement/set_random_player.gd" id="1_5gtbw"]
 [ext_resource type="Script" uid="uid://bqc0re08uiclu" path="res://ai/tasks/movement/is_distance_lessthan.gd" id="2_ohgi5"]
 [ext_resource type="Script" uid="uid://cqypksh7kuvfk" path="res://ai/tasks/movement/chase.gd" id="3_xgtuf"]
 [ext_resource type="Script" uid="uid://c5jkec1b05ilt" path="res://ai/tasks/movement/strafe.gd" id="4_d1gdq"]
+[ext_resource type="Script" uid="uid://dc25d1qg46j07" path="res://ai/tasks/movement/runaway.gd" id="4_ohgi5"]
 [ext_resource type="Script" uid="uid://dycpg5phc4c" path="res://ai/tasks/shooting/aim_relative_at.gd" id="5_ud1v2"]
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_8wdlt"]
@@ -29,32 +30,40 @@ script = ExtResource("3_xgtuf")
 custom_name = "Chase if far"
 children = [SubResource("BTInvert_y1gc2"), SubResource("BTAction_ror5h")]
 
+[sub_resource type="BTCondition" id="BTCondition_xgtuf"]
+script = ExtResource("2_ohgi5")
+distance_var = 5.0
+
+[sub_resource type="BTAction" id="BTAction_d1gdq"]
+script = ExtResource("4_ohgi5")
+
+[sub_resource type="BTSequence" id="BTSequence_ud1v2"]
+custom_name = "Run away logic"
+children = [SubResource("BTCondition_xgtuf"), SubResource("BTAction_d1gdq")]
+
 [sub_resource type="BTAction" id="BTAction_5gtbw"]
 script = ExtResource("4_d1gdq")
 
-[sub_resource type="BTAction" id="BTAction_ho6qd"]
+[sub_resource type="BTSelector" id="BTSelector_ho6qd"]
+children = [SubResource("BTSequence_ud1v2"), SubResource("BTAction_5gtbw")]
+
+[sub_resource type="BTAction" id="BTAction_ohgi5"]
 script = ExtResource("5_ud1v2")
 
-[sub_resource type="BBNode" id="BBNode_y1gc2"]
+[sub_resource type="BBNode" id="BBNode_ajhej"]
 saved_value = NodePath(".")
 resource_name = "."
 
-[sub_resource type="BTCallMethod" id="BTCallMethod_ajhej"]
-node = SubResource("BBNode_y1gc2")
+[sub_resource type="BTCallMethod" id="BTCallMethod_5gtbw"]
+node = SubResource("BBNode_ajhej")
 method = &"action_shoot"
 
-[sub_resource type="BTSequence" id="BTSequence_xgtuf"]
-custom_name = "Aim then Shoot"
-children = [SubResource("BTAction_ho6qd"), SubResource("BTCallMethod_ajhej")]
-
-[sub_resource type="BTRepeat" id="BTRepeat_ajhej"]
-forever = true
-custom_name = "Repeat Forever"
-children = [SubResource("BTSequence_xgtuf")]
+[sub_resource type="BTSequence" id="BTSequence_5gtbw"]
+children = [SubResource("BTAction_ohgi5"), SubResource("BTCallMethod_5gtbw")]
 
 [sub_resource type="BTParallel" id="BTParallel_ajhej"]
 custom_name = "Shoot if closer"
-children = [SubResource("BTAction_5gtbw"), SubResource("BTRepeat_ajhej")]
+children = [SubResource("BTSelector_ho6qd"), SubResource("BTSequence_5gtbw")]
 
 [sub_resource type="BTSelector" id="BTSelector_y1gc2"]
 custom_name = "Chase OR shoot based on distance"

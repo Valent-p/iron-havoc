@@ -3,7 +3,7 @@ extends Area3D
 @onready var particles_scn = preload("res://entities/particles/bullet_hit_particles.tscn")
 
 var speed: float = 200.0
-var damage: int = 25
+var damage: int = 10
 
 func _ready():
 	# If the bullet flies for 3 seconds without hitting anything, destroy it

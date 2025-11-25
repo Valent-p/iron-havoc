@@ -28,10 +28,13 @@ func _exit() -> void:
 
 
 # Called each time this task is ticked (aka executed).
-func _tick(delta: float) -> Status:
-	var target = agent.get_tree().get_nodes_in_group("UserPlayer")[0]
-	blackboard.set_var(target_var, target)
-	return SUCCESS
+func _tick(_delta: float) -> Status:
+	var targets = agent.get_tree().get_nodes_in_group("UserPlayer")
+	if not targets.is_empty():
+		blackboard.set_var(target_var, targets[randi_range(0, len(targets)-1)])
+		return SUCCESS
+	
+	return FAILURE
 
 # Strings returned from this method are displayed as warnings in the behavior tree editor (requires @tool).
 func _get_configuration_warnings() -> PackedStringArray:
