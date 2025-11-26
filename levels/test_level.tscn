@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://cu5cp3afg45js" path="res://entities/players/user/user_player.tscn" id="1_46lwt"]
 [ext_resource type="Texture2D" uid="uid://b3a4b0sxfbxxw" path="res://icon.svg" id="1_x25rp"]
 [ext_resource type="PackedScene" uid="uid://oqjfqsui4xs5" path="res://levels/wall.tscn" id="3_gmgay"]
-[ext_resource type="PackedScene" uid="uid://45nrlva4s2re" path="res://entities/players/bot/bot_player.tscn" id="4_w7r7j"]
 [ext_resource type="Script" uid="uid://22pib0i53s3k" path="res://levels/character_body_3d.gd" id="5_o6mel"]
+[ext_resource type="PackedScene" uid="uid://pq6my3uktuu4" path="res://entities/players/bot/bot_spawner.tscn" id="6_e7anx"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_x25rp"]
 
@@ -101,12 +101,6 @@ shadow_enabled = true
 [node name="Wall" parent="." instance=ExtResource("3_gmgay")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 1, 0)
 
-[node name="Bot" parent="." instance=ExtResource("4_w7r7j")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, -9.076202, 1.9785514, -1.494564)
-
-[node name="Bot2" parent="." instance=ExtResource("4_w7r7j")]
-transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 11.478098, 1.9785514, -1.494564)
-
 [node name="CharacterBody3D" type="CharacterBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5929282, 0)
 script = ExtResource("5_o6mel")
@@ -128,3 +122,6 @@ navigation_mesh = SubResource("NavigationMesh_w7r7j")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D"]
 transform = Transform3D(13.8786955, 0, 0, 0, 1, 0, 0, 0, 9.376082, 0, -0.5111909, 0)
 mesh = SubResource("PlaneMesh_o6mel")
+
+[node name="BotSpawner" parent="." instance=ExtResource("6_e7anx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.116552, 1.6092346, -12.140429)

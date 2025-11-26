@@ -1,18 +1,21 @@
 @abstract class_name Player
 extends CharacterBody3D
 
+var _explosion_scn: PackedScene = preload("res://entities/particles/tank_explosion.tscn")
+
 ## Current health
-var health: int = 100
+var _health: int = 100
 
 ## Currently equipped tanks
 var tank: Tank
 
-func take_damage(damage: int):
-	health -= damage
-	if health <= 0:
-		health = 0
-		
-		# The kill
-		# TODO: This is to temporarily make UserPlayer non killable, remove
-		if not self.is_in_group("UserPlayer"):
-			queue_free()
+## Returns true if dead, else false
+@abstract func take_damage(value: int) -> bool
+
+## Die by exploding
+func die():
+	var explosion: Node3D = _explosion_scn.instantiate()
+	get_tree().root.add_child(explosion)
+	explosion.global_position = global_position
+	
+	queue_free()

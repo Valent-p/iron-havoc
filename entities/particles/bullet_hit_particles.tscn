@@ -1,16 +1,61 @@
-[gd_scene load_steps=4 format=3 uid="uid://dv6q6bqa7kr4"]
+[gd_scene load_steps=10 format=3 uid="uid://dv6q6bqa7kr4"]
 
 [ext_resource type="Material" uid="uid://c4jelm6bdilic" path="res://entities/particles/bullet_hit_particles.tres" id="1_f5swa"]
 [ext_resource type="Material" uid="uid://t0ai24tv5cpe" path="res://entities/projectiles/bullet_material.tres" id="2_ruyck"]
+[ext_resource type="Script" uid="uid://dw5l5wkcw4quo" path="res://entities/particles/bullet_hit_particles.gd" id="3_gaolt"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_ruyck"]
 material = ExtResource("2_ruyck")
 
+[sub_resource type="Curve" id="Curve_ruyck"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.72916675, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_gaolt"]
+curve = SubResource("Curve_ruyck")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_1t44k"]
+particle_flag_align_y = true
+spread = 180.0
+initial_velocity_min = 12.0
+initial_velocity_max = 14.0
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_gaolt")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ky5lu"]
+albedo_color = Color(1, 0.31764707, 0.23529412, 1)
+emission_enabled = true
+emission = Color(1, 0.63529414, 0, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1t44k"]
+material = SubResource("StandardMaterial3D_ky5lu")
+top_radius = 0.05
+bottom_radius = 0.0
+height = 0.3
+
 [node name="BulletHitParticles" type="GPUParticles3D"]
 transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
-amount = 20
+emitting = false
+amount = 10
 lifetime = 0.6
+one_shot = true
 explosiveness = 1.0
 collision_base_size = 0.2
 process_material = ExtResource("1_f5swa")
 draw_pass_1 = SubResource("BoxMesh_ruyck")
+script = ExtResource("3_gaolt")
+
+[node name="Debris" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 10
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_1t44k")
+draw_pass_1 = SubResource("CylinderMesh_1t44k")
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true

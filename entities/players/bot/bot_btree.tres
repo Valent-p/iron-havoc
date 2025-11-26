@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=25 format=3 uid="uid://cbde2ehtgcqxi"]
+[gd_resource type="BehaviorTree" load_steps=26 format=3 uid="uid://cbde2ehtgcqxi"]
 
 [ext_resource type="Script" uid="uid://3n3bjyugu0bw" path="res://ai/tasks/movement/set_random_player.gd" id="1_5gtbw"]
 [ext_resource type="Script" uid="uid://bqc0re08uiclu" path="res://ai/tasks/movement/is_distance_lessthan.gd" id="2_ohgi5"]
@@ -13,7 +13,11 @@ var/target/type = 24
 var/target/hint = 34
 var/target/hint_string = "Who to follow"
 
+[sub_resource type="BTComment" id="BTComment_ohgi5"]
+custom_name = "This will be used to set the current target. The logic is, if current target=null, find another"
+
 [sub_resource type="BTAction" id="BTAction_y1gc2"]
+children = [SubResource("BTComment_ohgi5")]
 script = ExtResource("1_5gtbw")
 
 [sub_resource type="BTCondition" id="BTCondition_5gtbw"]

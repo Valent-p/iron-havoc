@@ -2,6 +2,17 @@
 
 Things I have to achieve or have achieved.
 
+## Version 0.0.5
+
+### Completed (18:43 - 26/11/25)
+
+Add particle effects for bullet hits and tank explosions; implement bot spawner
+
+- Created `bullet_hit_particles.gd` for bullet impact effects with debris emission.
+- Developed `tank_explosion.gd` to manage tank explosion effects, including fire and smoke particles.
+- Added corresponding scene files for tank explosions and bot spawner.
+- Implemented `bot_spawner.gd` to handle bot instantiation with configurable spawn intervals and limits.
+
 ## Version 0.0.4
 
 ### Expectation (16:58 - 25/11/25)

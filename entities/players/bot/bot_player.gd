@@ -101,8 +101,8 @@ func cmd_move(direction: Vector3):
 	_move_direction.y = 0 # Flatten
 
 ## AI calls this to look at a specific point in the world
-func cmd_aim_at(position: Vector3):
-	_aim_position = position
+func cmd_aim_at(_position: Vector3):
+	_aim_position = _position
 	_is_aiming = true
 
 ## AI calls this to stop aiming
@@ -114,6 +114,19 @@ func action_shoot():
 		can_fire = false
 		$AssaultTank.fire_bullet()
 		# Add timer reset logic here or in node
+
+
+func take_damage(value: int):
+	_health -= value
+	
+	var hp_scale = float(_health)/100.0
+	$HealthBar/Inner.scale =  Vector3(hp_scale, 1,  1)
+	
+	if _health <= 0:
+		_health = 0
+		
+		# The kill
+		die()
 
 func _on_firerate_timer_timeout() -> void:
 	can_fire = true

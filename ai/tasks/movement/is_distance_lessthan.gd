@@ -25,7 +25,7 @@ func _exit() -> void:
 
 
 # Called each time this task is ticked (aka executed).
-func _tick(delta: float) -> Status:
+func _tick(_delta: float) -> Status:
 	var target: Player = blackboard.get_var(target_var)
 	if not is_instance_valid(target):
 		return FAILURE

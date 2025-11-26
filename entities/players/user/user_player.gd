@@ -123,5 +123,20 @@ func action_muzzle_rotate(relative_x: float):
 	$AssaultTank/Model/turret_mount.rotate_y(-mouse_delta_x)
 	camera.rotate_y(-mouse_delta_x)
 
+
+func take_damage(value: int) -> bool:
+	# temporarily disable dying
+	return false
+	
+	_health -= value
+	if _health <= 0:
+		_health = 0
+		
+		# The kill
+		queue_free()
+		return true # dead
+	
+	return false # Not dead
+
 func _on_firerate_timer_timeout() -> void:
 	can_fire = true

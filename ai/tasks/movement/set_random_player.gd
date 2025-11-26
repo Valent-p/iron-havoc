@@ -1,42 +1,52 @@
-# meta-name: Custom Task
-# meta-description: Custom task to be used in a BehaviorTree
-# meta-default: true
 @tool
 extends BTAction
 ## SetRandomPlayer
 
 @export var target_var: StringName = &"target"
+@export var group_name: String = "AllPlayers"
+@export var overwrite: bool = false
 
-# Display a customized name (requires @tool).
 func _generate_name() -> String:
-	return "Set Random Player into %s" % [LimboUtility.decorate_var(target_var)]
+	return "Find Target from %s (Overwrite: %s)" % [group_name, str(overwrite)]
 
-
-# Called once during initialization.
-func _setup() -> void:
-	pass
-
-
-# Called each time this task is entered.
-func _enter() -> void:
-	pass
-
-
-# Called each time this task is exited.
-func _exit() -> void:
-	pass
-
-
-# Called each time this task is ticked (aka executed).
 func _tick(_delta: float) -> Status:
-	var targets = agent.get_tree().get_nodes_in_group("UserPlayer")
-	if not targets.is_empty():
-		blackboard.set_var(target_var, targets[randi_range(0, len(targets)-1)])
+	# 1. Check current target status
+	var current_target = blackboard.get_var(target_var)
+	var is_current_valid = is_instance_valid(current_target)
+	
+	# If we have a valid target and we are NOT overwriting, we are done. Keep the current one.
+	if is_current_valid and not overwrite:
+		# Optional: Check if target is dead (if you have a 'dead' variable)
+		# if current_target.health > 0:
 		return SUCCESS
 	
-	return FAILURE
-
-# Strings returned from this method are displayed as warnings in the behavior tree editor (requires @tool).
-func _get_configuration_warnings() -> PackedStringArray:
-	var warnings := PackedStringArray()
-	return warnings
+	# 2. Get all potential candidates
+	var all_nodes = agent.get_tree().get_nodes_in_group(group_name)
+	var valid_candidates = []
+	
+	# 3. FILTER the candidates
+	for node in all_nodes:
+		# A. Don't target myself! (Crucial for the "Shooting Wall" fix)
+		if node == agent:
+			continue
+			
+		# B. Must be a valid instance
+		if not is_instance_valid(node):
+			continue
+			
+		# C. (Optional) Don't target dead bodies if they linger
+		if node.is_queued_for_deletion():
+			continue
+			
+		valid_candidates.append(node)
+	
+	# 4. If no one is alive (except me), FAIL.
+	if valid_candidates.is_empty():
+		blackboard.set_var(target_var, null) # Clear target
+		return FAILURE
+	
+	# 5. Pick a random winner
+	var new_target = valid_candidates.pick_random()
+	blackboard.set_var(target_var, new_target)
+	
+	return SUCCESS

@@ -1,15 +1,17 @@
-[gd_scene load_steps=6 format=3 uid="uid://45nrlva4s2re"]
+[gd_scene load_steps=8 format=3 uid="uid://45nrlva4s2re"]
 
 [ext_resource type="Script" uid="uid://c61eygk5u3crr" path="res://entities/players/bot/bot_player.gd" id="1_wfqa2"]
 [ext_resource type="PackedScene" uid="uid://dkeyxnjsgknmh" path="res://entities/tanks/assault_tank.tscn" id="2_gu38n"]
 [ext_resource type="BehaviorTree" uid="uid://cbde2ehtgcqxi" path="res://entities/players/bot/bot_btree.tres" id="3_juxdq"]
+[ext_resource type="Texture2D" uid="uid://dlw15foygohrk" path="res://demo/assets/hp_under.png" id="4_4mugt"]
+[ext_resource type="Texture2D" uid="uid://hnwi23oef752" path="res://demo/assets/hp_bar.png" id="5_cn0g7"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_abrql"]
 size = Vector3(1.2487793, 1, 1.477417)
 
 [sub_resource type="BlackboardPlan" id="BlackboardPlan_gu38n"]
 
-[node name="BotPlayer" type="CharacterBody3D"]
+[node name="BotPlayer" type="CharacterBody3D" groups=["AllPlayers", "Bots"]]
 script = ExtResource("1_wfqa2")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -25,5 +27,15 @@ autostart = true
 [node name="BTPlayer" type="BTPlayer" parent="."]
 behavior_tree = ExtResource("3_juxdq")
 blackboard_plan = SubResource("BlackboardPlan_gu38n")
+
+[node name="HealthBar" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5384817, 0)
+billboard = 1
+texture = ExtResource("4_4mugt")
+
+[node name="Inner" type="Sprite3D" parent="HealthBar"]
+sorting_offset = 1.0
+billboard = 1
+texture = ExtResource("5_cn0g7")
 
 [connection signal="timeout" from="FirerateTimer" to="." method="_on_firerate_timer_timeout"]
