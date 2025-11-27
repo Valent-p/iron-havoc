@@ -1,7 +1,8 @@
-[gd_resource type="BehaviorTree" load_steps=26 format=3 uid="uid://cbde2ehtgcqxi"]
+[gd_resource type="BehaviorTree" load_steps=28 format=3 uid="uid://cbde2ehtgcqxi"]
 
 [ext_resource type="Script" uid="uid://3n3bjyugu0bw" path="res://ai/tasks/movement/set_random_player.gd" id="1_5gtbw"]
 [ext_resource type="Script" uid="uid://bqc0re08uiclu" path="res://ai/tasks/movement/is_distance_lessthan.gd" id="2_ohgi5"]
+[ext_resource type="Script" uid="uid://b7msvgo0to61n" path="res://ai/tasks/shooting/check_retaliation.gd" id="2_xgtuf"]
 [ext_resource type="Script" uid="uid://cqypksh7kuvfk" path="res://ai/tasks/movement/chase.gd" id="3_xgtuf"]
 [ext_resource type="Script" uid="uid://c5jkec1b05ilt" path="res://ai/tasks/movement/strafe.gd" id="4_d1gdq"]
 [ext_resource type="Script" uid="uid://dc25d1qg46j07" path="res://ai/tasks/movement/runaway.gd" id="4_ohgi5"]
@@ -12,6 +13,15 @@ var/target/name = &"target"
 var/target/type = 24
 var/target/hint = 34
 var/target/hint_string = "Who to follow"
+var/latest_aggressor/name = &"latest_aggressor"
+var/latest_aggressor/type = 24
+var/latest_aggressor/hint = 34
+var/latest_aggressor/hint_string = "Who did hit lastly"
+var/last_hit_time/name = &"last_hit_time"
+var/last_hit_time/type = 3
+var/last_hit_time/value = 0.0
+var/last_hit_time/hint = 0
+var/last_hit_time/hint_string = "When did `latest_aggressor` hit"
 
 [sub_resource type="BTComment" id="BTComment_ohgi5"]
 custom_name = "This will be used to set the current target. The logic is, if current target=null, find another"
@@ -19,6 +29,10 @@ custom_name = "This will be used to set the current target. The logic is, if cur
 [sub_resource type="BTAction" id="BTAction_y1gc2"]
 children = [SubResource("BTComment_ohgi5")]
 script = ExtResource("1_5gtbw")
+
+[sub_resource type="BTAction" id="BTAction_ud1v2"]
+script = ExtResource("2_xgtuf")
+compare_hp = true
 
 [sub_resource type="BTCondition" id="BTCondition_5gtbw"]
 script = ExtResource("2_ohgi5")
@@ -71,7 +85,7 @@ children = [SubResource("BTSelector_ho6qd"), SubResource("BTSequence_5gtbw")]
 
 [sub_resource type="BTSelector" id="BTSelector_y1gc2"]
 custom_name = "Chase OR shoot based on distance"
-children = [SubResource("BTSequence_y1gc2"), SubResource("BTParallel_ajhej")]
+children = [SubResource("BTAction_ud1v2"), SubResource("BTSequence_y1gc2"), SubResource("BTParallel_ajhej")]
 
 [sub_resource type="BTSequence" id="BTSequence_40u77"]
 children = [SubResource("BTAction_y1gc2"), SubResource("BTSelector_y1gc2")]

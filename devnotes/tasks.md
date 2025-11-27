@@ -2,6 +2,12 @@
 
 Things I have to achieve or have achieved.
 
+## Version 0.0.6
+
+### Completed (08:46 - 27/11/25)
+
+Started implementing powerups. Currently, there is just a health restore powerup.
+
 ## Version 0.0.5
 
 ### Completed (18:43 - 26/11/25)

@@ -2,7 +2,13 @@ extends Area3D
 
 @onready var particles_scn = preload("res://entities/particles/bullet_hit_particles.tscn")
 
+## Who shot
+var player: Player
+
+## How fast to move
 var speed: float = 200.0
+
+## How bad to hurt
 var damage: int = 10
 
 func _ready():
@@ -18,12 +24,16 @@ func _physics_process(delta: float) -> void:
 	position -= transform.basis.z * speed * delta
 
 func _on_body_entered(body: Node3D):
+	# In case it was freed or something
+	if not is_instance_valid(body) or not is_instance_valid(self.player):
+		return
+		
 	# Don't hit ourselves (optional check, mostly handled by layers later)
 	# But we usually want to ignore the shooter if possible.
 	
 	# Check if the object we hit has a 'take_damage' function
 	if body.has_method("take_damage"):
-		body.take_damage(damage)
+		body.take_damage(damage, self.player)
 	
 	# Create an explosion effect here if you have one
 	var particles: GPUParticles3D = particles_scn.instantiate()

@@ -14,17 +14,22 @@ var target_velocity = Vector3.ZERO
 var target_angle: float = 0
 
 func _ready():
+	tank = $AssaultTank
+	
 	Input.mouse_mode = (Input.MOUSE_MODE_CAPTURED)
 	
 	# 1. Get the nodes
-	var base = $AssaultTank/Model/base
-	var left_wheel = $AssaultTank/Model/left
-	var right_wheel = $AssaultTank/Model/right
+	var base = tank.model_base
+	var left_wheel = tank.model_left
+	var right_wheel = tank.model_right
 	
 	# 2. Move the wheels inside the base
 	# The 'true' argument keeps them in their current physical position
 	left_wheel.reparent(base, true)
 	right_wheel.reparent(base, true)
+	
+	# Params
+	$AssaultTank.player = self
 
 func _physics_process(delta: float) -> void:
 	action_shoot()
@@ -74,14 +79,14 @@ func action_move(delta:float, input_dir: Vector3) -> bool:
 			target_angle += PI 
 
 			# Smoothly rotate ONLY the Y axis
-			$AssaultTank/Model/base.rotation.y = lerp_angle($AssaultTank/Model/base.rotation.y, target_angle, rotation_speed * delta)
-			collision.rotation.y = $AssaultTank/Model/base.rotation.y 
+			tank.model_base.rotation.y = lerp_angle(tank.model_base.rotation.y, target_angle, rotation_speed * delta)
+			collision.rotation.y = tank.model_base.rotation.y 
 	else:
 		target_velocity = Vector3.ZERO
 	
 		
 	# Calculate how far off we are (0.0 is perfect, 1.0 is facing opposite)
-	var angle_diff = abs(angle_difference($AssaultTank/Model/base.rotation.y, target_angle))
+	var angle_diff = abs(angle_difference(tank.model_base.rotation.y, target_angle))
 	
 	# Create a multiplier: 
 	# If angle is 0 (facing forward), multiplier is 1.0 (Full Speed).
@@ -118,13 +123,13 @@ func _unhandled_input(event):
 
 func action_muzzle_rotate(relative_x: float):
 	var mouse_delta_x = relative_x * mouse_sensitivity
-	$AssaultTank/Model/pipe.rotate_y(-mouse_delta_x)
-	$AssaultTank/Model/pipe_cup.rotate_y(-mouse_delta_x)
-	$AssaultTank/Model/turret_mount.rotate_y(-mouse_delta_x)
+	tank.model_pipe.rotate_y(-mouse_delta_x)
+	tank.model_pipe_cup.rotate_y(-mouse_delta_x)
+	tank.model_turret_mount.rotate_y(-mouse_delta_x)
 	camera.rotate_y(-mouse_delta_x)
 
 
-func take_damage(value: int) -> bool:
+func take_damage(value: int, attacker: Player) -> bool:
 	# temporarily disable dying
 	return false
 	

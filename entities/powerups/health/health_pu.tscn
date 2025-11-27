@@ -1,0 +1,64 @@
+[gd_scene load_steps=7 format=3 uid="uid://nlm8me1batep"]
+
+[ext_resource type="Script" uid="uid://dto7qxhxaiclo" path="res://entities/powerups/health/health_pu.gd" id="1_xdgfe"]
+[ext_resource type="PackedScene" uid="uid://dkc3s3dmpr56" path="res://assets/powerups/health.blend" id="2_dsn2u"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dsn2u"]
+
+[sub_resource type="Animation" id="Animation_dsn2u"]
+resource_name = "up_down"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Model:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(0, 1, 0), Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_gbvl7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Model:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_gxt5f"]
+_data = {
+&"RESET": SubResource("Animation_gbvl7"),
+&"up_down": SubResource("Animation_dsn2u")
+}
+
+[node name="HealthPu" type="Area3D"]
+script = ExtResource("1_xdgfe")
+
+[node name="Model" parent="." instance=ExtResource("2_dsn2u")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 0, 0)
+shape = SubResource("BoxShape3D_dsn2u")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_gxt5f")
+}
+
+[node name="SpotLight3D" type="SpotLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 4, 0)
+light_color = Color(1, 0, 0, 1)
+light_energy = 5.0
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -10,7 +10,10 @@ var _health: int = 100
 var tank: Tank
 
 ## Returns true if dead, else false
-@abstract func take_damage(value: int) -> bool
+@abstract func take_damage(value: int, attacker: Player) -> bool
+
+func heal(value: int):
+	_health = min(value + _health, tank.health_max)
 
 ## Die by exploding
 func die():
@@ -19,3 +22,7 @@ func die():
 	explosion.global_position = global_position
 	
 	queue_free()
+
+## Get current health
+func get_health():
+	return _health

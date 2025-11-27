@@ -3,15 +3,23 @@ extends Tank
 @onready var bullet_scene: PackedScene = preload("res://entities/projectiles/bullet.tscn")
 
 @onready var muzzle = $Muzzle
+@onready var model_left = $Model/left
+@onready var model_right = $Model/right
+@onready var model_base = $Model/base
+@onready var model_pipe = $Model/pipe
+@onready var model_pipe_cup = $Model/pipe_cup
+@onready var model_turret_mount = $Model/turret_mount
+
+## The owner
+var player: Player
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-		muzzle.reparent($Model/pipe_cup, true)
+		muzzle.reparent(model_pipe_cup, true)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	pass
-
 
 func fire_bullet():
 	# 1. Create the bullet
@@ -24,3 +32,6 @@ func fire_bullet():
 	# 3. Set position and rotation to match the muzzle
 	bullet.global_position = muzzle.global_position
 	bullet.global_rotation = muzzle.global_rotation
+	
+	# 4. Setting argues
+	bullet.player = player

@@ -25,11 +25,17 @@ var _is_aiming: bool = false
 var can_fire = true
 
 func _ready():
+	tank = $AssaultTank
+	
 	# Keep your wheel logic
-	var left_wheel = $AssaultTank/Model/left
-	var right_wheel = $AssaultTank/Model/right
+	var left_wheel = tank.model_left
+	var right_wheel = tank.model_right
 	left_wheel.reparent(base_mesh, true)
 	right_wheel.reparent(base_mesh, true)
+	
+	# Params
+	tank.player = self
+
 
 func _physics_process(delta: float) -> void:
 	_handle_movement(delta)
@@ -116,7 +122,7 @@ func action_shoot():
 		# Add timer reset logic here or in node
 
 
-func take_damage(value: int):
+func take_damage(value: int, attacker: Player):
 	_health -= value
 	
 	var hp_scale = float(_health)/100.0
@@ -127,6 +133,13 @@ func take_damage(value: int):
 		
 		# The kill
 		die()
+	else:
+		var bt = $BTPlayer 
+		if bt and bt.blackboard:
+			# 1. Who hit me?
+			bt.blackboard.set_var("latest_aggressor", attacker)
+			# 2. When did they hit me? (Milliseconds since game start)
+			bt.blackboard.set_var("last_hit_time", Time.get_ticks_msec())
 
 func _on_firerate_timer_timeout() -> void:
 	can_fire = true
