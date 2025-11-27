@@ -3,6 +3,7 @@ extends Tank
 @onready var bullet_scene: PackedScene = preload("res://entities/projectiles/bullet.tscn")
 
 @onready var muzzle = $Muzzle
+@onready var muzzle_raycast = $Muzzle/RayCast3D
 @onready var model_left = $Model/left
 @onready var model_right = $Model/right
 @onready var model_base = $Model/base
@@ -16,10 +17,26 @@ var player: Player
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 		muzzle.reparent(model_pipe_cup, true)
+		
+		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
-	pass
+	'''
+	# Ensure the raycast is enabled
+	muzzle_raycast.enabled = true
+	# Update the raycast (if its position or target changes)
+	muzzle_raycast.force_raycast_update()
+
+	if muzzle_raycast.is_colliding():
+		var collider: Object = muzzle_raycast.get_collider()
+		var collision_point: Vector3 = muzzle_raycast.get_collision_point()
+		print("Ray hit: ", collider.name, " at ", collision_point)
+	else:
+		print("Ray not colliding.")
+	'''
+	
+	
 
 func fire_bullet():
 	# 1. Create the bullet

@@ -5,7 +5,7 @@ extends BTAction
 ## Uses cmd_move to circle the target.
 
 @export var target_var: StringName = &"target"
-@export var direction_change_interval: float = 2.0 
+@export var direction_change_interval: float = 2.0
 
 var _strafe_dir: int = 1 
 var _timer: float = 0.0

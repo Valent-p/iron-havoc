@@ -2,6 +2,18 @@
 
 Things I have to achieve or have achieved.
 
+## Version 0.0.7
+
+### Completed (15:22 - 27/11/2025)
+
+feat: Implement map generation and UI updates
+
+- Added MapGenerator class for procedural map generation with walls and navigation mesh.
+- Introduced map_wall scene for wall instantiation.
+- Created one_vs_all_screen_ui for score display with dynamic updates.
+- Imported new font and texture assets for UI.
+- Configured texture compression settings for improved performance.
+
 ## Version 0.0.6
 
 ### Completed (08:46 - 27/11/25)

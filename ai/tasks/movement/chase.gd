@@ -6,16 +6,15 @@ extends BTAction
 ## _CLASS_
 
 @export var target_var: StringName = &"target"
+@export var distance: float = 5.0
 
 # Display a customized name (requires @tool).
 func _generate_name() -> String:
-	return "Chase %s" % [LimboUtility.decorate_var(target_var)] 
+	return "Chase %s (distance: %s)" % [LimboUtility.decorate_var(target_var), str(distance)] 
 	
 # Called once during initialization.
 func _setup() -> void:
 	pass
-
-
 
 # Called each time this task is entered.
 func _enter() -> void:
@@ -33,9 +32,17 @@ func _tick(delta: float) -> Status:
 	if not is_instance_valid(target):
 		return FAILURE
 	
-	var direction = agent.global_position.direction_to(target.global_position)
+	agent.nav_agent.set_target_position(target.global_position)
+	var direction = agent.global_position.direction_to(agent.nav_agent.get_next_path_position())
+	
+	var actual_dist = (target.global_position - agent.global_position).length()
+	## Chased and caught
+	if actual_dist <= distance:
+		return SUCCESS
+		
 	agent.cmd_move(direction)
-	return SUCCESS
+	
+	return RUNNING
 
 # Strings returned from this method are displayed as warnings in the behavior tree editor (requires @tool).
 func _get_configuration_warnings() -> PackedStringArray:

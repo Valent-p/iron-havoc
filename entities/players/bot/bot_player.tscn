@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://45nrlva4s2re"]
+[gd_scene load_steps=9 format=3 uid="uid://45nrlva4s2re"]
 
 [ext_resource type="Script" uid="uid://c61eygk5u3crr" path="res://entities/players/bot/bot_player.gd" id="1_wfqa2"]
 [ext_resource type="PackedScene" uid="uid://dkeyxnjsgknmh" path="res://entities/tanks/assault_tank.tscn" id="2_gu38n"]
 [ext_resource type="BehaviorTree" uid="uid://cbde2ehtgcqxi" path="res://entities/players/bot/bot_btree.tres" id="3_juxdq"]
+[ext_resource type="FontFile" uid="uid://n231m6uqsq6x" path="res://demo/assets/fonts/junction_bold.otf" id="4_1qogm"]
 [ext_resource type="Texture2D" uid="uid://dlw15foygohrk" path="res://demo/assets/hp_under.png" id="4_4mugt"]
 [ext_resource type="Texture2D" uid="uid://hnwi23oef752" path="res://demo/assets/hp_bar.png" id="5_cn0g7"]
 
@@ -28,6 +29,14 @@ autostart = true
 behavior_tree = ExtResource("3_juxdq")
 blackboard_plan = SubResource("BlackboardPlan_gu38n")
 
+[node name="NameLabel" type="Label3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.33867, 0)
+pixel_size = 0.002
+billboard = 1
+fixed_size = true
+text = "[My name Is the Bot]"
+font = ExtResource("4_1qogm")
+
 [node name="HealthBar" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5384817, 0)
 billboard = 1
@@ -37,5 +46,9 @@ texture = ExtResource("4_4mugt")
 sorting_offset = 1.0
 billboard = 1
 texture = ExtResource("5_cn0g7")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+debug_enabled = true
+debug_path_custom_color = Color(0.59363925, 0.00025749952, 0.5936351, 1)
 
 [connection signal="timeout" from="FirerateTimer" to="." method="_on_firerate_timer_timeout"]

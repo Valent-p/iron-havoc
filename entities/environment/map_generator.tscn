@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://bs5wuqq765b4b"]
+
+[ext_resource type="Script" uid="uid://dq5qsxfwn1vtx" path="res://entities/environment/map_generator.gd" id="1_7x20t"]
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_7x20t"]
+
+[node name="MapGenerator" type="NavigationRegion3D"]
+navigation_mesh = SubResource("NavigationMesh_7x20t")
+script = ExtResource("1_7x20t")

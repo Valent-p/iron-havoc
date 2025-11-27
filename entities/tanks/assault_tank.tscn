@@ -11,3 +11,11 @@ script = ExtResource("1_l0r76")
 
 [node name="Muzzle" type="Marker3D" parent="."]
 transform = Transform3D(-1, 7.105427e-15, 8.7422784e-08, -3.5527137e-15, 0.9999999, 1.5046328e-36, -8.742277e-08, 6.211761e-22, -0.9999999, -1.2201936e-06, 4.424228, 11.291081)
+
+[node name="RayCast3D" type="RayCast3D" parent="Muzzle"]
+transform = Transform3D(-1, 7.105429e-15, -8.742281e-08, -3.552715e-15, 1.0000002, -3.1058827e-22, 8.7422784e-08, 0, -1.0000002, 0, 0, 0)
+target_position = Vector3(0, 0, 200)
+collision_mask = 4294967295
+collide_with_areas = true
+debug_shape_custom_color = Color(1, 0, 0, 1)
+debug_shape_thickness = 5

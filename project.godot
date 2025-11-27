@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 UserPlayer="Only has the user controlled player(s)"
 Bots="For only bots."
 AllPlayers="Every player in the game."
+Walls="All wall obstacles"
 
 [input]
 

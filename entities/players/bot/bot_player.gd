@@ -4,6 +4,8 @@ extends Player
 @onready var bullet_scene: PackedScene = preload("res://entities/projectiles/bullet.tscn")
 @onready var collision = $CollisionShape3D
 
+@onready var nav_agent = $NavigationAgent3D
+
 # Visual Nodes
 @onready var base_mesh = $AssaultTank/Model/base
 # We group the turret parts to rotate them together
@@ -26,6 +28,8 @@ var can_fire = true
 
 func _ready():
 	tank = $AssaultTank
+	
+	$NameLabel.text = data.get("name")
 	
 	# Keep your wheel logic
 	var left_wheel = tank.model_left
@@ -115,14 +119,23 @@ func cmd_aim_at(_position: Vector3):
 func cmd_stop_aim():
 	_is_aiming = false
 
-func action_shoot():
+## Just shoot
+func cmd_shoot():
 	if can_fire:
 		can_fire = false
 		$AssaultTank.fire_bullet()
-		# Add timer reset logic here or in node
+
+## Shoot only if we are aiming on the target
+func cmd_on_target_shoot():
+	if can_fire and tank.muzzle_raycast.is_colliding():
+		if is_instance_of(tank.muzzle_raycast.get_collider(), Player):
+			can_fire = false
+			$AssaultTank.fire_bullet()
 
 
 func take_damage(value: int, attacker: Player):
+	last_attacker = attacker
+	
 	_health -= value
 	
 	var hp_scale = float(_health)/100.0

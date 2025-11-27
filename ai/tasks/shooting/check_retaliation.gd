@@ -44,11 +44,4 @@ func _tick(_delta: float) -> Status:
 			print("Switching target to aggressor (weak): ", aggressor.name)
 			return SUCCESS
 	
-	blackboard.set_var(target_var, aggressor)
-	#print("Switching target to aggressor: ", aggressor.name)
-	
-	# Clear the aggressor so we don't switch again next frame unnecessarily
-	# (Or keep it if you want to constantly update)
-	# blackboard.set_var(aggressor_var, null) 
-	
-	return SUCCESS
+	return FAILURE
