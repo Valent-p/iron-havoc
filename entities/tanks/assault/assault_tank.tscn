@@ -1,13 +1,13 @@
 [gd_scene load_steps=3 format=3 uid="uid://dkeyxnjsgknmh"]
 
-[ext_resource type="PackedScene" uid="uid://crgxsumm47tou" path="res://assets/tanks/tank_assault.blend" id="1_334nl"]
-[ext_resource type="Script" uid="uid://dqmw2qydsjify" path="res://entities/tanks/assault_tank.gd" id="1_l0r76"]
+[ext_resource type="Script" uid="uid://dqmw2qydsjify" path="res://entities/tanks/assault/assault_tank.gd" id="1_nikne"]
+[ext_resource type="PackedScene" uid="uid://crgxsumm47tou" path="res://assets/tanks/tank_assault.blend" id="2_1xv0t"]
 
 [node name="AssaultTank" type="Node3D"]
 transform = Transform3D(0.4, 0, 0, 0, 0.4, 0, 0, 0, 0.4, 0, 0, 0)
-script = ExtResource("1_l0r76")
+script = ExtResource("1_nikne")
 
-[node name="Model" parent="." instance=ExtResource("1_334nl")]
+[node name="Model" parent="." instance=ExtResource("2_1xv0t")]
 
 [node name="Muzzle" type="Marker3D" parent="."]
 transform = Transform3D(-1, 7.105427e-15, 8.7422784e-08, -3.5527137e-15, 0.9999999, 1.5046328e-36, -8.742277e-08, 6.211761e-22, -0.9999999, -1.2201936e-06, 4.424228, 11.291081)

@@ -1,6 +1,7 @@
 extends Tank
 
 @onready var bullet_scene: PackedScene = preload("res://entities/projectiles/bullet.tscn")
+@onready var missile_scene: PackedScene = preload("res://entities/projectiles/missile.tscn")
 
 @onready var muzzle = $Muzzle
 @onready var muzzle_raycast = $Muzzle/RayCast3D
@@ -38,7 +39,7 @@ func _process(delta: float) -> void:
 	
 	
 
-func fire_bullet():
+func fire_primary():
 	# 1. Create the bullet
 	var bullet = bullet_scene.instantiate()
 		
@@ -52,3 +53,18 @@ func fire_bullet():
 	
 	# 4. Setting argues
 	bullet.player = player
+
+func fire_secondary():
+	# 1. Create the bullet
+	var missile = missile_scene.instantiate()
+		
+	# 2. Add it to the MAIN SCENE, not the tank.
+	# If you add it to the tank, the bullet will move/rotate with the tank.
+	get_tree().root.add_child(missile)
+
+	# 3. Set position and rotation to match the muzzle
+	missile.global_position = muzzle.global_position
+	missile.global_rotation = muzzle.global_rotation
+	
+	# 4. Setting argues
+	missile.player = player

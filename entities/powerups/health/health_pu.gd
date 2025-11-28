@@ -1,3 +1,4 @@
+class_name HealthPu
 extends Powerup
 
 ## Rotation speed
@@ -9,6 +10,7 @@ var value = 40
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	$AnimationPlayer.play("up_down")
+	type = PU_TYPE.HEALTH
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.

@@ -1,4 +1,4 @@
-[gd_resource type="BehaviorTree" load_steps=39 format=3 uid="uid://cbde2ehtgcqxi"]
+[gd_resource type="BehaviorTree" load_steps=38 format=3 uid="uid://cbde2ehtgcqxi"]
 
 [ext_resource type="Script" uid="uid://3n3bjyugu0bw" path="res://ai/tasks/movement/set_random_player.gd" id="1_5gtbw"]
 [ext_resource type="Script" uid="uid://bb6hh84nj8lt7" path="res://ai/tasks/movement/collect_pu.gd" id="1_d1gdq"]
@@ -36,11 +36,8 @@ script = ExtResource("1_ud1v2")
 script = ExtResource("1_d1gdq")
 
 [sub_resource type="BTSequence" id="BTSequence_y6ovw"]
-children = [SubResource("BTCondition_ud1v2"), SubResource("BTAction_y6ovw")]
-
-[sub_resource type="BTAlwaysSucceed" id="BTAlwaysSucceed_jgilv"]
 custom_name = "Find health if life state is critical"
-children = [SubResource("BTSequence_y6ovw")]
+children = [SubResource("BTCondition_ud1v2"), SubResource("BTAction_y6ovw")]
 
 [sub_resource type="BTComment" id="BTComment_ohgi5"]
 custom_name = "This will be used to set the current target. The logic is, if current target=null, find another"
@@ -126,7 +123,7 @@ custom_name = "Chase OR shoot based on distance"
 children = [SubResource("BTAction_ud1v2"), SubResource("BTParallel_xgtuf"), SubResource("BTParallel_ajhej")]
 
 [sub_resource type="BTSequence" id="BTSequence_ho6qd"]
-children = [SubResource("BTAlwaysSucceed_jgilv"), SubResource("BTAction_y1gc2"), SubResource("BTSelector_y1gc2")]
+children = [SubResource("BTSequence_y6ovw"), SubResource("BTAction_y1gc2"), SubResource("BTSelector_y1gc2")]
 
 [resource]
 blackboard_plan = SubResource("BlackboardPlan_8wdlt")

@@ -4,7 +4,9 @@ extends Player
 @onready var collision = $CollisionShape3D
 @onready var camera = $TopdownCamera
 
-var can_fire = true
+var can_fire_primary = true
+var can_fire_secondary = true
+
 ## X rotation factor
 var mouse_sensitivity: float = 0.002
 
@@ -32,7 +34,15 @@ func _ready():
 	$AssaultTank.player = self
 
 func _physics_process(delta: float) -> void:
-	action_shoot()
+	if Input.is_action_pressed("primary_shoot"):
+		if can_fire_primary:
+			can_fire_primary = false
+			$AssaultTank.fire_primary()
+			
+	elif Input.is_action_pressed("secondary_shoot"):
+		if can_fire_secondary:
+			can_fire_secondary = false
+			$AssaultTank.fire_secondary()
 	
 	var input_dir = Vector3.ZERO
 	
@@ -46,11 +56,6 @@ func _physics_process(delta: float) -> void:
 		input_dir.z += 1
 	
 	action_move(delta, input_dir)
-
-func action_shoot():
-	if can_fire and Input.is_action_pressed("primary_shoot"):
-		can_fire = false
-		$AssaultTank.fire_bullet()
 
 func action_move(delta:float, input_dir: Vector3) -> bool:
 	if input_dir != Vector3.ZERO:
@@ -144,4 +149,8 @@ func take_damage(value: int, attacker: Player) -> bool:
 	return false # Not dead
 
 func _on_firerate_timer_timeout() -> void:
-	can_fire = true
+	can_fire_primary = true
+
+
+func _on_secondary_fire_timer_timeout() -> void:
+	can_fire_secondary = true

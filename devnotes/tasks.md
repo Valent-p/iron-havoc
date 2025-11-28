@@ -2,6 +2,13 @@
 
 Things I have to achieve or have achieved.
 
+## Version 0.0.8
+
+feat: Implement missile and missile impact area
+
+- The impact area affects only players in the range.
+- While in range, the closer the higher the damage.
+
 ## Version 0.0.7
 
 ### Completed (15:22 - 27/11/2025)

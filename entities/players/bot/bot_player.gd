@@ -15,6 +15,12 @@ extends Player
 	$AssaultTank/Model/turret_mount
 ]
 
+## Currently detected powerups. [br]
+## Null is not detected. Can only detected one for each type.
+var detected_powerups = {
+	Powerup.PU_TYPE.HEALTH: null,
+}
+
 # Stats
 var speed: float = 6.0
 var base_turn_speed: float = deg_to_rad(180) # Radians per second
@@ -123,14 +129,14 @@ func cmd_stop_aim():
 func cmd_shoot():
 	if can_fire:
 		can_fire = false
-		$AssaultTank.fire_bullet()
+		$AssaultTank.fire_primary()
 
 ## Shoot only if we are aiming on the target
 func cmd_on_target_shoot():
 	if can_fire and tank.muzzle_raycast.is_colliding():
 		if is_instance_of(tank.muzzle_raycast.get_collider(), Player):
 			can_fire = false
-			$AssaultTank.fire_bullet()
+			$AssaultTank.fire_primary()
 
 
 func take_damage(value: int, attacker: Player):
@@ -156,3 +162,25 @@ func take_damage(value: int, attacker: Player):
 
 func _on_firerate_timer_timeout() -> void:
 	can_fire = true
+
+
+func _on_powerup_detect_area_area_entered(area: Area3D) -> void:
+	if not area is Powerup:
+		return
+	
+	var powerup: Powerup = area as Powerup
+	var old = detected_powerups[powerup.type]
+	
+	# If same type, choose closer one
+	if is_instance_valid(old):
+		var old_dist = (old.position - position).length()
+		var new_dist = (powerup.position - position).length()
+		if new_dist < old_dist:
+			print("Discarding old")
+			detected_powerups[powerup.type] = powerup
+		## else we keep the old
+		return
+	
+	# Take the new one
+	detected_powerups[powerup.type] = powerup
+	print("New powerup", detected_powerups)

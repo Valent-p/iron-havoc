@@ -1,6 +1,6 @@
-[gd_scene load_steps=21 format=3 uid="uid://nkhg3kfddtlm"]
+[gd_scene load_steps=22 format=3 uid="uid://c4xxyg7k70hqt"]
 
-[ext_resource type="Script" uid="uid://fn0hn76ejll0" path="res://entities/particles/tank_explosion.gd" id="1_hup3f"]
+[ext_resource type="Script" uid="uid://2ux1knhhmhpg" path="res://entities/particles/missile_explosion.gd" id="1_ed41y"]
 
 [sub_resource type="Curve" id="Curve_8baae"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.5, 1), 0.0, 0.0, 0, 0, Vector2(0.99999, 0), 0.0, 0.0, 0, 0]
@@ -27,8 +27,9 @@ emission_energy_multiplier = 2.0
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_acgk3"]
 material = SubResource("StandardMaterial3D_07ufd")
-top_radius = 0.1
+top_radius = 0.2
 bottom_radius = 0.0
+height = 4.0
 
 [sub_resource type="Gradient" id="Gradient_8vo06"]
 offsets = PackedFloat32Array(0.5533981, 1)
@@ -74,6 +75,8 @@ albedo_color = Color(1, 1, 1, 0.6666667)
 
 [sub_resource type="SphereMesh" id="SphereMesh_ent78"]
 material = SubResource("StandardMaterial3D_u1nv3")
+radius = 2.0
+height = 4.0
 radial_segments = 8
 rings = 4
 
@@ -97,45 +100,52 @@ emission_sphere_radius = 1.0
 direction = Vector3(0, -1, 0)
 initial_velocity_min = 1.0
 initial_velocity_max = 2.0
-gravity = Vector3(0, 5, 0)
+gravity = Vector3(0, 10, 0)
 scale_min = 0.5
 scale_max = 1.5
 scale_curve = SubResource("CurveTexture_67fim")
 color = Color(0.2084086, 0.08439443, 6.016344e-08, 1)
 alpha_curve = SubResource("CurveTexture_50frx")
 
-[node name="TankExplosion" type="Node3D"]
-script = ExtResource("1_hup3f")
+[sub_resource type="SphereShape3D" id="SphereShape3D_ed41y"]
+
+[node name="MissileExplosion" type="Node3D"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
+script = ExtResource("1_ed41y")
 
 [node name="Debris" type="GPUParticles3D" parent="."]
-emitting = false
 amount = 24
 lifetime = 0.5
-one_shot = true
 explosiveness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_07ufd")
 draw_pass_1 = SubResource("CylinderMesh_acgk3")
 
 [node name="Fire" type="GPUParticles3D" parent="."]
-emitting = false
 amount = 12
-one_shot = true
 explosiveness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_m8mkd")
 draw_pass_1 = SubResource("SphereMesh_ent78")
 
 [node name="Smoke" type="GPUParticles3D" parent="."]
-emitting = false
 amount = 12
 lifetime = 2.0
-one_shot = true
 explosiveness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_u7jn3")
 draw_pass_1 = SubResource("SphereMesh_ent78")
 
 [node name="Timer" type="Timer" parent="."]
+wait_time = 2.0
 one_shot = true
 autostart = true
+
+[node name="ImpactArea" type="Area3D" parent="."]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="ImpactArea"]
+shape = SubResource("SphereShape3D_ed41y")
+debug_color = Color(0.9930616, 0.6798019, 0.8357944, 0.41960785)
+
+[connection signal="body_entered" from="ImpactArea" to="." method="_on_impact_area_body_entered"]

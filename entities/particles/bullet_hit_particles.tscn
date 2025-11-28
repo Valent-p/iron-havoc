@@ -58,4 +58,5 @@ process_material = SubResource("ParticleProcessMaterial_1t44k")
 draw_pass_1 = SubResource("CylinderMesh_1t44k")
 
 [node name="Timer" type="Timer" parent="."]
+one_shot = true
 autostart = true

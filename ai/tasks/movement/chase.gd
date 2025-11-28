@@ -33,9 +33,9 @@ func _tick(delta: float) -> Status:
 		return FAILURE
 	
 	agent.nav_agent.set_target_position(target.global_position)
-	var direction = agent.global_position.direction_to(agent.nav_agent.get_next_path_position())
+	var direction = agent.position.direction_to(agent.nav_agent.get_next_path_position())
 	
-	var actual_dist = (target.global_position - agent.global_position).length()
+	var actual_dist = (target.position - agent.position).length()
 	## Chased and caught
 	if actual_dist <= distance:
 		return SUCCESS
