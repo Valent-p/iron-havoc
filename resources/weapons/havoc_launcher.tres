@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeaponResource" load_steps=3 format=3 uid="uid://dleysfa0yolbn"]
+
+[ext_resource type="PackedScene" uid="uid://b4ayhjqobyhe4" path="res://entities/missile_projectile.tscn" id="1_6nfdw"]
+[ext_resource type="Script" uid="uid://diaktwcreh315" path="res://resources/weapon_resource.gd" id="2_s5nfl"]
+
+[resource]
+script = ExtResource("2_s5nfl")
+weapon_name = "Havoc Launcher"
+damage = 40.0
+fire_rate = 1.5
+projectile_speed = 20.0
+projectile_scene = ExtResource("1_6nfdw")
+metadata/_custom_type_script = "uid://diaktwcreh315"

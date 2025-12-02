@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://b4ayhjqobyhe4"]
+
+[ext_resource type="Script" uid="uid://d1mnrt3xe4pr0" path="res://entities/missile_projectile.gd" id="1_3atjh"]
+[ext_resource type="PackedScene" uid="uid://nkhg3kfddtlm" path="res://particles/explosion_vfx.tscn" id="2_2m5mt"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_46mfb"]
+radius = 0.2
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jnjrb"]
+emission_enabled = true
+emission = Color(1, 1, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_27it7"]
+material = SubResource("StandardMaterial3D_jnjrb")
+radius = 0.2
+height = 0.5
+radial_segments = 4
+rings = 4
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_46mfb"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+
+[node name="MissileProjectile" type="Area3D"]
+collision_layer = 4
+collision_mask = 9
+script = ExtResource("1_3atjh")
+explosion_scene = ExtResource("2_2m5mt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+shape = SubResource("CapsuleShape3D_46mfb")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
+mesh = SubResource("CapsuleMesh_27it7")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_46mfb")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

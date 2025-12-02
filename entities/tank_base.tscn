@@ -1,0 +1,99 @@
+[gd_scene load_steps=14 format=3 uid="uid://ct53aorxa5oa0"]
+
+[ext_resource type="PackedScene" uid="uid://d4nkjdb7r1fvp" path="res://components/movement_component.tscn" id="1_i6gs3"]
+[ext_resource type="PackedScene" uid="uid://em313nvnv1df" path="res://components/input_component.tscn" id="2_leov7"]
+[ext_resource type="PackedScene" uid="uid://dk3j0jtpdk8ks" path="res://components/hitbox_component.tscn" id="3_ounar"]
+[ext_resource type="PackedScene" uid="uid://dnnqv7u3afhhy" path="res://components/weapon_component.tscn" id="3_snst0"]
+[ext_resource type="PackedScene" uid="uid://s0jsggrtpa0l" path="res://components/health_component.tscn" id="4_p3c8e"]
+[ext_resource type="Script" uid="uid://cvxdgcg85wd8u" path="res://entities/label_3d.gd" id="5_x36o6"]
+[ext_resource type="Resource" uid="uid://dleysfa0yolbn" path="res://resources/weapons/havoc_launcher.tres" id="6_p3c8e"]
+[ext_resource type="PackedScene" uid="uid://bqc1bge6v11vv" path="res://components/lifecycle_component.tscn" id="7_p3c8e"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_snst0"]
+size = Vector3(1, 0.5, 2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i6gs3"]
+
+[sub_resource type="PrismMesh" id="PrismMesh_x36o6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rjtql"]
+size = Vector3(1, 0.5, 2)
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ounar"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("TurretPivot:rotation")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+properties/3/path = NodePath("HealthComponent:current_health")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+
+[node name="TankBase" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 3
+
+[node name="BodyMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_snst0")
+
+[node name="TurretPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.39063334, 0)
+
+[node name="Camera3D" type="Camera3D" parent="TurretPivot"]
+transform = Transform3D(1, 0, 0, 0, 0.70710677, 0.70710677, 0, -0.70710677, 0.70710677, 0, 6, 6)
+
+[node name="Muzzle" type="Marker3D" parent="TurretPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.510468)
+
+[node name="TurretMesh" type="MeshInstance3D" parent="TurretPivot/Muzzle"]
+transform = Transform3D(0.19199994, 0, 0, 0, 0.17639998, 0, 0, 0, 2.7, 0, 0, 1.5064322)
+mesh = SubResource("BoxMesh_i6gs3")
+skeleton = NodePath("../..")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -0.08682418)
+mesh = SubResource("PrismMesh_x36o6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_rjtql")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_ounar")
+
+[node name="MovementComponent" parent="." node_paths=PackedStringArray("body", "turret_pivot") instance=ExtResource("1_i6gs3")]
+body = NodePath("..")
+turret_pivot = NodePath("../TurretPivot")
+
+[node name="InputComponent" parent="." node_paths=PackedStringArray("movement_component", "weapon_component", "turret_pivot", "camera") groups=["Players"] instance=ExtResource("2_leov7")]
+movement_component = NodePath("../MovementComponent")
+weapon_component = NodePath("../WeaponComponent")
+turret_pivot = NodePath("../TurretPivot")
+camera = NodePath("../TurretPivot/Camera3D")
+
+[node name="HitboxComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("3_ounar")]
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="HitboxComponent"]
+shape = SubResource("BoxShape3D_rjtql")
+
+[node name="HealthComponent" parent="." instance=ExtResource("4_p3c8e")]
+
+[node name="WeaponComponent" parent="." node_paths=PackedStringArray("muzzle") instance=ExtResource("3_snst0")]
+weapon_stats = ExtResource("6_p3c8e")
+muzzle = NodePath("../TurretPivot/Muzzle")
+
+[node name="LifecycleComponent" parent="." node_paths=PackedStringArray("health_component", "tank_root", "visuals", "collider") instance=ExtResource("7_p3c8e")]
+health_component = NodePath("../HealthComponent")
+tank_root = NodePath("..")
+visuals = NodePath("../BodyMesh")
+collider = NodePath("../CollisionShape3D")
+
+[node name="Label3D" type="Label3D" parent="." node_paths=PackedStringArray("health_component")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9018354, 0)
+billboard = 1
+script = ExtResource("5_x36o6")
+health_component = NodePath("../HealthComponent")
